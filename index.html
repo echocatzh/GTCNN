@@ -1,0 +1,364 @@
+
+<!DOCTYPE html>
+<html lang="en-US"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+<!-- Begin Jekyll SEO tag v2.7.1 -->
+<title>Personalized Acoustic Echo Cancellation for Full-duplex Communications</title>
+<meta name="generator" content="Jekyll v3.9.0">
+<meta property="og:title" content="TODO: title">
+<meta property="og:locale" content="en_US">
+<link rel="canonical" href="https://echocatzh.github.io/GTCNN/">
+<meta property="og:url" content="https://echocatzh.github.io/GTCNN/">
+<meta name="twitter:card" content="summary">
+<!-- End Jekyll SEO tag -->
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#157878">
+    <link rel="stylesheet" href="./GTCNN_files/style.css">
+  </head>
+  <body data-new-gr-c-s-check-loaded="14.1001.0" data-gr-ext-installed="">
+    <section class="page-header">
+      
+    </section>
+
+<section class="main-content">
+      <h1 id=""><center>Personalized Acoustic Echo Cancellation for Full-duplex Communications
+	  </center></h1>
+
+<center> <a href="https://github.com/echocatzh">Shimin Zhang</a><sup>1</sup>, Ziteng Wang, Yukai Ju<sup>1</sup>, Yihui Fu<sup>1</sup>, Yueyue Na, Qiang Fu, Lei Xie<sup>1</sup></center>
+<center> <sup>1</sup>Audio, Speech and Language Processing Group (ASLP@NPU), Northwestern Polytechnical University, Xi'an, China</center>
+
+<h2>0. Contents</h2>
+<ol>
+  <li><a href="https://echocatzh.github.io/GTCNN/#abstract">Abstract</a></li>
+  <li><a href="https://echocatzh.github.io/GTCNN/#inplab">Corresponding input and label</a></li>
+  <li><a href="https://echocatzh.github.io/GTCNN/#ser5sir5">DT-Noise (SER=5 dB, SIR=5 dB)</a></li>
+  <li><a href="https://echocatzh.github.io/GTCNN/#ser5sir15">DT-Noise (SER=5 dB, SIR=15 dB)</a></li>
+  <li><a href="https://echocatzh.github.io/GTCNN/#ser15sir5">DT-Noise (SER=15 dB, SIR=5 dB)</a></li>
+  <li><a href="https://echocatzh.github.io/GTCNN/#ser15sir15">DT-Noise (SER=15 dB, SIR=15 dB)</a></li>
+</ol>
+
+<br><br>
+<h2 id="abstract">1. Abstract<a name="abstract"></a></h2>
+<p> 
+  Deep neural networks (DNNs) have shown promising results for acoustic echo cancellation (AEC). But the DNN-based AEC models let through all near-end speakers including the interfering speech. In light of recent studies on personalized speech enhancement, we investigate the feasibility of personalized acoustic echo cancellation (PAEC) in this paper for full-duplex communications, where background noise and interfering speakers may coexist with acoustic echoes. Specifically, we first propose a novel backbone neural network termed as gated temporal convolutional neural network (GTCNN) that outperforms state-of-the-art AEC models in performance. Speaker embeddings like d-vectors are further adopted as auxiliary information to guide the GTCNN to focus on the target speaker. A special case in PAEC is that speech snippets of both parties on the call are enrolled. Experimental results show that auxiliary information from either the near-end speaker or the far-end speaker can improve the DNN-based AEC performance. Nevertheless, there is still much room for improvement in the utilization of the finite-dimensional speaker embeddings.  
+  <br>
+	<center><img src="./GTCNN_files/system.png" style="height:240px"/></center>
+	<center><img src="./GTCNN_files/gtcnn.png" style="height:360px"/></center>
+<br><br>
+
+<h2>2. The corresponding reference, enrolled speech and label<a name="inplab"></a></h2>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: center"><strong>-</strong></th>
+      <th style="text-align: center"><strong>Sample 1</strong></th>
+      <th style="text-align: center"><strong>Sample 2</strong></th>
+      <th style="text-align: center"><strong>Sample 3</strong></th>
+      <th style="text-align: center"><strong>Sample 4</strong></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left">Label</td>
+      <td style="text-align: left"><audio src="exp/label/p227_021.wav" controls="" preload=""></audio></td>
+      <td style="text-align: left"><audio src="exp/label/p228_008.wav" controls="" preload=""></audio></td>
+      <td style="text-align: left"><audio src="exp/label/p243_035.wav" controls="" preload=""></audio></td>
+      <td style="text-align: left"><audio src="exp/label/p282_024.wav" controls="" preload=""></audio></td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Reference</td>
+      <td style="text-align: left"><audio src="exp/reference/p227_021.wav" controls="" preload=""></audio></td>
+      <td style="text-align: left"><audio src="exp/reference/p228_008.wav" controls="" preload=""></audio></td>
+      <td style="text-align: left"><audio src="exp/reference/p243_035.wav" controls="" preload=""></audio></td>
+      <td style="text-align: left"><audio src="exp/reference/p282_024.wav" controls="" preload=""></audio></td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Near-end enrolled</td>
+      <td style="text-align: left"><audio src="exp/enrollment/p227_021.wav" controls="" preload=""></audio></td>
+      <td style="text-align: left"><audio src="exp/enrollment/p228_008.wav" controls="" preload=""></audio></td>
+      <td style="text-align: left"><audio src="exp/enrollment/p243_035.wav" controls="" preload=""></audio></td>
+      <td style="text-align: left"><audio src="exp/enrollment/p282_024.wav" controls="" preload=""></audio></td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Far-end enrolled</sub></td>
+      <td style="text-align: left"><audio src="exp/enrollment_ref/p227_021.wav" controls="" preload=""></audio></td>
+      <td style="text-align: left"><audio src="exp/enrollment_ref/p228_008.wav" controls="" preload=""></audio></td>
+      <td style="text-align: left"><audio src="exp/enrollment_ref/p243_035.wav" controls="" preload=""></audio></td>
+      <td style="text-align: left"><audio src="exp/enrollment_ref/p282_024.wav" controls="" preload=""></audio></td>
+    </tr>
+
+  </tbody>
+</table>
+<br><br>
+
+
+<h2>3. SER=5 dB, SIR=5 dB, trained with D3<a name="ser5sir5"></a></h2>
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: center"><strong>Models</strong></th>
+      <th style="text-align: center"><strong>Sample 1</strong></th>
+      <th style="text-align: center"><strong>Sample 2</strong></th>
+      <th style="text-align: center"><strong>Sample 3</strong></th>
+      <th style="text-align: center"><strong>Sample 4</strong></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left">Microphone</td>
+      <td style="text-align: left"><audio src="exp/input/ser5_sir5/p227_021.wav" controls="" preload=""></audio></td>
+      <td style="text-align: left"><audio src="exp/input/ser5_sir5/p228_008.wav" controls="" preload=""></audio></td>
+      <td style="text-align: left"><audio src="exp/input/ser5_sir5/p243_035.wav" controls="" preload=""></audio></td>
+      <td style="text-align: left"><audio src="exp/input/ser5_sir5/p282_024.wav" controls="" preload=""></audio></td>
+    </tr>
+    <tr>
+      <td style="text-align: left">GCCRN</td>
+      <td style="text-align: left"><audio src="exp/gccrn/ser5_sir5/p227_021.wav" controls="" preload=""></audio></td>
+      <td style="text-align: left"><audio src="exp/gccrn/ser5_sir5/p228_008.wav" controls="" preload=""></audio></td>
+      <td style="text-align: left"><audio src="exp/gccrn/ser5_sir5/p243_035.wav" controls="" preload=""></audio></td>
+      <td style="text-align: left"><audio src="exp/gccrn/ser5_sir5/p282_024.wav" controls="" preload=""></audio></td>
+    </tr>
+    <tr>
+      <td style="text-align: left">DTLN</td>
+      <td style="text-align: left"><audio src="exp/dtln/ser5_sir5/p227_021.wav" controls="" preload=""></audio></td>
+      <td style="text-align: left"><audio src="exp/dtln/ser5_sir5/p228_008.wav" controls="" preload=""></audio></td>
+      <td style="text-align: left"><audio src="exp/dtln/ser5_sir5/p243_035.wav" controls="" preload=""></audio></td>
+      <td style="text-align: left"><audio src="exp/dtln/ser5_sir5/p282_024.wav" controls="" preload=""></audio></td>
+    </tr>
+    <tr>
+      <td style="text-align: left">GTCNN-E_<sub>s</sub></td>
+      <td style="text-align: left"><audio src="exp/gtcnnes/ser5_sir5/p227_021.wav" controls="" preload=""></audio></td>
+      <td style="text-align: left"><audio src="exp/gtcnnes/ser5_sir5/p228_008.wav" controls="" preload=""></audio></td>
+      <td style="text-align: left"><audio src="exp/gtcnnes/ser5_sir5/p243_035.wav" controls="" preload=""></audio></td>
+      <td style="text-align: left"><audio src="exp/gtcnnes/ser5_sir5/p282_024.wav" controls="" preload=""></audio></td>
+    </tr>
+    <tr>
+      <td style="text-align: left">GTCNN-E_<sub>x</sub></td>
+      <td style="text-align: left"><audio src="exp/gtcnnex/ser5_sir5/p227_021.wav" controls="" preload=""></audio></td>
+      <td style="text-align: left"><audio src="exp/gtcnnex/ser5_sir5/p228_008.wav" controls="" preload=""></audio></td>
+      <td style="text-align: left"><audio src="exp/gtcnnex/ser5_sir5/p243_035.wav" controls="" preload=""></audio></td>
+      <td style="text-align: left"><audio src="exp/gtcnnex/ser5_sir5/p282_024.wav" controls="" preload=""></audio></td>
+    </tr>
+    <tr>
+      <td style="text-align: left">GTCNN-E_<sub>mix</sub></td>
+      <td style="text-align: left"><audio src="exp/gtcnnemix/ser5_sir5/p227_021.wav" controls="" preload=""></audio></td>
+      <td style="text-align: left"><audio src="exp/gtcnnemix/ser5_sir5/p228_008.wav" controls="" preload=""></audio></td>
+      <td style="text-align: left"><audio src="exp/gtcnnemix/ser5_sir5/p243_035.wav" controls="" preload=""></audio></td>
+      <td style="text-align: left"><audio src="exp/gtcnnemix/ser5_sir5/p282_024.wav" controls="" preload=""></audio></td>
+    </tr>
+    <tr>
+      <td style="text-align: left">GTCNN-L</sub></td>
+      <td style="text-align: left"><audio src="exp/gtcnnl/ser5_sir5/p227_021.wav" controls="" preload=""></audio></td>
+      <td style="text-align: left"><audio src="exp/gtcnnl/ser5_sir5/p228_008.wav" controls="" preload=""></audio></td>
+      <td style="text-align: left"><audio src="exp/gtcnnl/ser5_sir5/p243_035.wav" controls="" preload=""></audio></td>
+      <td style="text-align: left"><audio src="exp/gtcnnl/ser5_sir5/p282_024.wav" controls="" preload=""></audio></td>
+    </tr>
+  </tbody>
+</table>
+<br><br>
+
+
+
+<h2>4. SER=5 dB, SIR=15 dB, trained with D3<a name="ser5sir15"></a></h2>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: center"><strong>Models</strong></th>
+      <th style="text-align: center"><strong>Sample 1</strong></th>
+      <th style="text-align: center"><strong>Sample 2</strong></th>
+      <th style="text-align: center"><strong>Sample 3</strong></th>
+      <th style="text-align: center"><strong>Sample 4</strong></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left">Microphone</td>
+      <td style="text-align: left"><audio src="exp/input/ser5_sir15/p227_021.wav" controls="" preload=""></audio></td>
+      <td style="text-align: left"><audio src="exp/input/ser5_sir15/p228_008.wav" controls="" preload=""></audio></td>
+      <td style="text-align: left"><audio src="exp/input/ser5_sir15/p243_035.wav" controls="" preload=""></audio></td>
+      <td style="text-align: left"><audio src="exp/input/ser5_sir15/p282_024.wav" controls="" preload=""></audio></td>
+    </tr>
+    <tr>
+      <td style="text-align: left">GCCRN</td>
+      <td style="text-align: left"><audio src="exp/gccrn/ser5_sir15/p227_021.wav" controls="" preload=""></audio></td>
+      <td style="text-align: left"><audio src="exp/gccrn/ser5_sir15/p228_008.wav" controls="" preload=""></audio></td>
+      <td style="text-align: left"><audio src="exp/gccrn/ser5_sir15/p243_035.wav" controls="" preload=""></audio></td>
+      <td style="text-align: left"><audio src="exp/gccrn/ser5_sir15/p282_024.wav" controls="" preload=""></audio></td>
+    </tr>
+    <tr>
+      <td style="text-align: left">DTLN</td>
+      <td style="text-align: left"><audio src="exp/dtln/ser5_sir15/p227_021.wav" controls="" preload=""></audio></td>
+      <td style="text-align: left"><audio src="exp/dtln/ser5_sir15/p228_008.wav" controls="" preload=""></audio></td>
+      <td style="text-align: left"><audio src="exp/dtln/ser5_sir15/p243_035.wav" controls="" preload=""></audio></td>
+      <td style="text-align: left"><audio src="exp/dtln/ser5_sir15/p282_024.wav" controls="" preload=""></audio></td>
+    </tr>
+    <tr>
+      <td style="text-align: left">GTCNN-E_<sub>s</sub></td>
+      <td style="text-align: left"><audio src="exp/gtcnnes/ser5_sir15/p227_021.wav" controls="" preload=""></audio></td>
+      <td style="text-align: left"><audio src="exp/gtcnnes/ser5_sir15/p228_008.wav" controls="" preload=""></audio></td>
+      <td style="text-align: left"><audio src="exp/gtcnnes/ser5_sir15/p243_035.wav" controls="" preload=""></audio></td>
+      <td style="text-align: left"><audio src="exp/gtcnnes/ser5_sir15/p282_024.wav" controls="" preload=""></audio></td>
+    </tr>
+    <tr>
+      <td style="text-align: left">GTCNN-E_<sub>x</sub></td>
+      <td style="text-align: left"><audio src="exp/gtcnnex/ser5_sir15/p227_021.wav" controls="" preload=""></audio></td>
+      <td style="text-align: left"><audio src="exp/gtcnnex/ser5_sir15/p228_008.wav" controls="" preload=""></audio></td>
+      <td style="text-align: left"><audio src="exp/gtcnnex/ser5_sir15/p243_035.wav" controls="" preload=""></audio></td>
+      <td style="text-align: left"><audio src="exp/gtcnnex/ser5_sir15/p282_024.wav" controls="" preload=""></audio></td>
+    </tr>
+    <tr>
+      <td style="text-align: left">GTCNN-E_<sub>mix</sub></td>
+      <td style="text-align: left"><audio src="exp/gtcnnemix/ser5_sir15/p227_021.wav" controls="" preload=""></audio></td>
+      <td style="text-align: left"><audio src="exp/gtcnnemix/ser5_sir15/p228_008.wav" controls="" preload=""></audio></td>
+      <td style="text-align: left"><audio src="exp/gtcnnemix/ser5_sir15/p243_035.wav" controls="" preload=""></audio></td>
+      <td style="text-align: left"><audio src="exp/gtcnnemix/ser5_sir15/p282_024.wav" controls="" preload=""></audio></td>
+    </tr>
+    <tr>
+      <td style="text-align: left">GTCNN-L</sub></td>
+      <td style="text-align: left"><audio src="exp/gtcnnl/ser5_sir15/p227_021.wav" controls="" preload=""></audio></td>
+      <td style="text-align: left"><audio src="exp/gtcnnl/ser5_sir15/p228_008.wav" controls="" preload=""></audio></td>
+      <td style="text-align: left"><audio src="exp/gtcnnl/ser5_sir15/p243_035.wav" controls="" preload=""></audio></td>
+      <td style="text-align: left"><audio src="exp/gtcnnl/ser5_sir15/p282_024.wav" controls="" preload=""></audio></td>
+    </tr>
+  </tbody>
+</table>
+<br><br>
+
+<h2>5. SER=15 dB, SIR=5 dB, trained with D3<a name="ser15sir5"></a></h2>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: center"><strong>Models</strong></th>
+      <th style="text-align: center"><strong>Sample 1</strong></th>
+      <th style="text-align: center"><strong>Sample 2</strong></th>
+      <th style="text-align: center"><strong>Sample 3</strong></th>
+      <th style="text-align: center"><strong>Sample 4</strong></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left">Microphone</td>
+      <td style="text-align: left"><audio src="exp/input/ser15_sir5/p227_021.wav" controls="" preload=""></audio></td>
+      <td style="text-align: left"><audio src="exp/input/ser15_sir5/p228_008.wav" controls="" preload=""></audio></td>
+      <td style="text-align: left"><audio src="exp/input/ser15_sir5/p243_035.wav" controls="" preload=""></audio></td>
+      <td style="text-align: left"><audio src="exp/input/ser15_sir5/p282_024.wav" controls="" preload=""></audio></td>
+    </tr>
+    <tr>
+      <td style="text-align: left">GCCRN</td>
+      <td style="text-align: left"><audio src="exp/gccrn/ser15_sir5/p227_021.wav" controls="" preload=""></audio></td>
+      <td style="text-align: left"><audio src="exp/gccrn/ser15_sir5/p228_008.wav" controls="" preload=""></audio></td>
+      <td style="text-align: left"><audio src="exp/gccrn/ser15_sir5/p243_035.wav" controls="" preload=""></audio></td>
+      <td style="text-align: left"><audio src="exp/gccrn/ser15_sir5/p282_024.wav" controls="" preload=""></audio></td>
+    </tr>
+    <tr>
+      <td style="text-align: left">DTLN</td>
+      <td style="text-align: left"><audio src="exp/dtln/ser15_sir5/p227_021.wav" controls="" preload=""></audio></td>
+      <td style="text-align: left"><audio src="exp/dtln/ser15_sir5/p228_008.wav" controls="" preload=""></audio></td>
+      <td style="text-align: left"><audio src="exp/dtln/ser15_sir5/p243_035.wav" controls="" preload=""></audio></td>
+      <td style="text-align: left"><audio src="exp/dtln/ser15_sir5/p282_024.wav" controls="" preload=""></audio></td>
+    </tr>
+    <tr>
+      <td style="text-align: left">GTCNN-E_<sub>s</sub></td>
+      <td style="text-align: left"><audio src="exp/gtcnnes/ser15_sir5/p227_021.wav" controls="" preload=""></audio></td>
+      <td style="text-align: left"><audio src="exp/gtcnnes/ser15_sir5/p228_008.wav" controls="" preload=""></audio></td>
+      <td style="text-align: left"><audio src="exp/gtcnnes/ser15_sir5/p243_035.wav" controls="" preload=""></audio></td>
+      <td style="text-align: left"><audio src="exp/gtcnnes/ser15_sir5/p282_024.wav" controls="" preload=""></audio></td>
+    </tr>
+    <tr>
+      <td style="text-align: left">GTCNN-E_<sub>x</sub></td>
+      <td style="text-align: left"><audio src="exp/gtcnnex/ser15_sir5/p227_021.wav" controls="" preload=""></audio></td>
+      <td style="text-align: left"><audio src="exp/gtcnnex/ser15_sir5/p228_008.wav" controls="" preload=""></audio></td>
+      <td style="text-align: left"><audio src="exp/gtcnnex/ser15_sir5/p243_035.wav" controls="" preload=""></audio></td>
+      <td style="text-align: left"><audio src="exp/gtcnnex/ser15_sir5/p282_024.wav" controls="" preload=""></audio></td>
+    </tr>
+    <tr>
+      <td style="text-align: left">GTCNN-E_<sub>mix</sub></td>
+      <td style="text-align: left"><audio src="exp/gtcnnemix/ser15_sir5/p227_021.wav" controls="" preload=""></audio></td>
+      <td style="text-align: left"><audio src="exp/gtcnnemix/ser15_sir5/p228_008.wav" controls="" preload=""></audio></td>
+      <td style="text-align: left"><audio src="exp/gtcnnemix/ser15_sir5/p243_035.wav" controls="" preload=""></audio></td>
+      <td style="text-align: left"><audio src="exp/gtcnnemix/ser15_sir5/p282_024.wav" controls="" preload=""></audio></td>
+    </tr>
+    <tr>
+      <td style="text-align: left">GTCNN-L</sub></td>
+      <td style="text-align: left"><audio src="exp/gtcnnl/ser15_sir5/p227_021.wav" controls="" preload=""></audio></td>
+      <td style="text-align: left"><audio src="exp/gtcnnl/ser15_sir5/p228_008.wav" controls="" preload=""></audio></td>
+      <td style="text-align: left"><audio src="exp/gtcnnl/ser15_sir5/p243_035.wav" controls="" preload=""></audio></td>
+      <td style="text-align: left"><audio src="exp/gtcnnl/ser15_sir5/p282_024.wav" controls="" preload=""></audio></td>
+    </tr>
+  </tbody>
+</table>
+<h2>6. SER=15 dB, SIR=15 dB, trained with D3<a name="ser15sir15"></a></h2>
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: center"><strong>Models</strong></th>
+      <th style="text-align: center"><strong>Sample 1</strong></th>
+      <th style="text-align: center"><strong>Sample 2</strong></th>
+      <th style="text-align: center"><strong>Sample 3</strong></th>
+      <th style="text-align: center"><strong>Sample 4</strong></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left">Microphone</td>
+      <td style="text-align: left"><audio src="exp/input/ser15_sir15/p227_021.wav" controls="" preload=""></audio></td>
+      <td style="text-align: left"><audio src="exp/input/ser15_sir15/p228_008.wav" controls="" preload=""></audio></td>
+      <td style="text-align: left"><audio src="exp/input/ser15_sir15/p243_035.wav" controls="" preload=""></audio></td>
+      <td style="text-align: left"><audio src="exp/input/ser15_sir15/p282_024.wav" controls="" preload=""></audio></td>
+    </tr>
+    <tr>
+      <td style="text-align: left">GCCRN</td>
+      <td style="text-align: left"><audio src="exp/gccrn/ser15_sir15/p227_021.wav" controls="" preload=""></audio></td>
+      <td style="text-align: left"><audio src="exp/gccrn/ser15_sir15/p228_008.wav" controls="" preload=""></audio></td>
+      <td style="text-align: left"><audio src="exp/gccrn/ser15_sir15/p243_035.wav" controls="" preload=""></audio></td>
+      <td style="text-align: left"><audio src="exp/gccrn/ser15_sir15/p282_024.wav" controls="" preload=""></audio></td>
+    </tr>
+    <tr>
+      <td style="text-align: left">DTLN</td>
+      <td style="text-align: left"><audio src="exp/dtln/ser15_sir15/p227_021.wav" controls="" preload=""></audio></td>
+      <td style="text-align: left"><audio src="exp/dtln/ser15_sir15/p228_008.wav" controls="" preload=""></audio></td>
+      <td style="text-align: left"><audio src="exp/dtln/ser15_sir15/p243_035.wav" controls="" preload=""></audio></td>
+      <td style="text-align: left"><audio src="exp/dtln/ser15_sir15/p282_024.wav" controls="" preload=""></audio></td>
+    </tr>
+    <tr>
+      <td style="text-align: left">GTCNN-E_<sub>s</sub></td>
+      <td style="text-align: left"><audio src="exp/gtcnnes/ser15_sir15/p227_021.wav" controls="" preload=""></audio></td>
+      <td style="text-align: left"><audio src="exp/gtcnnes/ser15_sir15/p228_008.wav" controls="" preload=""></audio></td>
+      <td style="text-align: left"><audio src="exp/gtcnnes/ser15_sir15/p243_035.wav" controls="" preload=""></audio></td>
+      <td style="text-align: left"><audio src="exp/gtcnnes/ser15_sir15/p282_024.wav" controls="" preload=""></audio></td>
+    </tr>
+    <tr>
+      <td style="text-align: left">GTCNN-E_<sub>x</sub></td>
+      <td style="text-align: left"><audio src="exp/gtcnnex/ser15_sir15/p227_021.wav" controls="" preload=""></audio></td>
+      <td style="text-align: left"><audio src="exp/gtcnnex/ser15_sir15/p228_008.wav" controls="" preload=""></audio></td>
+      <td style="text-align: left"><audio src="exp/gtcnnex/ser15_sir15/p243_035.wav" controls="" preload=""></audio></td>
+      <td style="text-align: left"><audio src="exp/gtcnnex/ser15_sir15/p282_024.wav" controls="" preload=""></audio></td>
+    </tr>
+    <tr>
+      <td style="text-align: left">GTCNN-E_<sub>mix</sub></td>
+      <td style="text-align: left"><audio src="exp/gtcnnemix/ser15_sir15/p227_021.wav" controls="" preload=""></audio></td>
+      <td style="text-align: left"><audio src="exp/gtcnnemix/ser15_sir15/p228_008.wav" controls="" preload=""></audio></td>
+      <td style="text-align: left"><audio src="exp/gtcnnemix/ser15_sir15/p243_035.wav" controls="" preload=""></audio></td>
+      <td style="text-align: left"><audio src="exp/gtcnnemix/ser15_sir15/p282_024.wav" controls="" preload=""></audio></td>
+    </tr>
+    <tr>
+      <td style="text-align: left">GTCNN-L</sub></td>
+      <td style="text-align: left"><audio src="exp/gtcnnl/ser15_sir15/p227_021.wav" controls="" preload=""></audio></td>
+      <td style="text-align: left"><audio src="exp/gtcnnl/ser15_sir15/p228_008.wav" controls="" preload=""></audio></td>
+      <td style="text-align: left"><audio src="exp/gtcnnl/ser15_sir15/p243_035.wav" controls="" preload=""></audio></td>
+      <td style="text-align: left"><audio src="exp/gtcnnl/ser15_sir15/p282_024.wav" controls="" preload=""></audio></td>
+    </tr>
+  </tbody>
+</table>
+
+</table>
+      <footer class="site-footer">
+        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com/">GitHub Pages</a>.</span>
+      </footer>
+    </section>
+
+</body></html>
